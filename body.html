@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>Weather-App-page-practice</title>
+    <!-- <link rel="stylesheet" href="syle.css" /> -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Muli:wght@400;700&display=swap');
+
+      body {
+        display: flex;
+        justify-content: center;
+        font-family: 'Muli', sans-serif;
+        background-color: #222;
+        color: #fff;
+      }
+
+      .hideAndSeek {
+        display: none;
+      }
+
+      /* SEARCH-INPUT AND BUTTON */
+      .search-container {
+        margin-top: 100px;
+        /* border: 2px solid white; */
+        border: 0;
+        border-radius: 30px;
+        width: 90%;
+        width: 450px;
+        padding: 40px 35px;
+        background: linear-gradient(135deg, #00feba, #5b548a);
+      }
+
+      .search {
+        position: relative;
+        border: 0;
+      }
+
+      .input {
+        border: 0;
+        width: 80%;
+        height: 48px;
+        width: 380px;
+        font-size: 20px;
+        padding: 5px 20px;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
+      }
+
+      .input:focus,
+      .btn:focus {
+        outline: 0;
+      }
+
+      .btn .i-tag {
+        font-size: 20px;
+      }
+
+      .btn {
+        background-color: #fff;
+        border-radius: 2px;
+        position: absolute;
+        height: 58px;
+        width: 48px;
+        border: 0;
+        margin: 0;
+        right: 4px;
+        top: 0;
+      }
+
+      .invalid {
+        font-size: 24px;
+        font-weight: 600;
+        padding-left: 15px;
+        margin-bottom: 0;
+      }
+
+      /* TEMPERATURE IMGAGE AND CITY NAME */
+
+      .temp {
+        margin-top: 25px;
+        margin-bottom: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .temp h1 {
+        font-size: 90px;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .temp p strong {
+        font-size: 55px;
+        /* margin-top: -5px; */
+      }
+
+      .temp p {
+        margin: 0;
+      }
+
+      /* wind and humidity classe */
+
+      .temp-hum-wind {
+        display: flex;
+        margin-top: 50px;
+        height: 60px;
+        justify-content: space-around;
+      }
+
+      .display {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .img-humi,
+      .img-wind {
+        height: 55px;
+        padding-right: 15px;
+      }
+
+      .display div h2 {
+        margin-bottom: 0;
+      }
+
+      .display div p {
+        margin-top: 0;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search-container">
+      <form class="search">
+        <input type="text" placeholder="Search..." class="input" />
+        <button class="btn"><i class="fas fa-search i-tag"></i></button>
+      </form>
+      <p class="invalid hideAndSeek">Invalid city name</p>
+      <div class="temp-info hideAndSeek">
+        <div class="temp">
+          <img src="img/Clear.png" alt="" />
+          <h1>23°C</h1>
+          <p><strong class="city">Hisar</strong></p>
+        </div>
+        <div class="temp-hum-wind">
+          <div class="display">
+            <img class="img-humi" src="img/humidity.png" alt="" />
+            <div>
+              <h2 class="humidity">24%</h2>
+              <p><strong>Humidity</strong></p>
+            </div>
+          </div>
+          <div class="display">
+            <img class="img-wind" src="img/wind.png" alt="" />
+            <div>
+              <h2 class="wind">50km/h</h2>
+              <p><strong>Wind</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <script src="script.js"></script> -->
+    <script>
+      'use strict';
+
+      // SELECTING THINGS NEEDED
+      const input = document.querySelector('.input');
+      const btn = document.querySelector('.btn');
+      const temperature = document.querySelector('.temp h1');
+      const city = document.querySelector('.city');
+      const humidity = document.querySelector('.humidity');
+      const wind = document.querySelector('.wind');
+      const img = document.querySelector('.temp img');
+      const invalidCity = document.querySelector('.invalid');
+      const tempInfo = document.querySelector('.temp-info');
+
+      // SELECTING APPI KEY AND URL
+      const apiKey = '545865cbcb1fa0b8616302920e0b55e4';
+      const apiUrl =
+        'https://api.openweathermap.org/data/2.5/weather?&units=metric';
+
+      // api call to fetch data
+      async function checkWeather(inputValue) {
+        const response = await fetch(
+          `${apiUrl}&q=${inputValue}&appid=${apiKey}`
+        );
+        const data = await response.json();
+
+        // IF-ELSE CONDITION TO CHECK THE CITY IS VALID OR NOT
+        if (response.status == 404) {
+          invalidCity.classList.remove('hideAndSeek');
+          tempInfo.classList.add('hideAndSeek');
+        } else {
+          temperature.textContent = `${data.main.temp.toFixed(1)}°C`;
+          city.textContent = `${data.name}`;
+          humidity.textContent = `${data.main.humidity}%`;
+          wind.textContent = `${data.wind.speed.toFixed(1)}%`;
+          let { weather } = data;
+          let [weathercondition] = weather;
+          let { main } = weathercondition;
+          img.src = `img/${main}.png`;
+          tempInfo.classList.remove('hideAndSeek');
+          invalidCity.classList.add('hideAndSeek');
+          input.value = '';
+        }
+      }
+
+      // EVENT HANDLER TO CHECK THE CITY TEMPERATURE WHEN CLICK HAPPEN ON SEARCH BUTTON
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        checkWeather(input.value);
+      });
+    </script>
+  </body>
+</html>
